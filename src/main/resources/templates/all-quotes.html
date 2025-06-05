@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Все цитаты - CRUD Citatus+</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        /* Скопируйте сюда ваши стили из тега <style> файла index.html */
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: #eee;
+            background-color: #474747;
+        }
+        body {
+            background-image: url("https://wiki.star-conflict.ru/uploads/R2ST5r.gif");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .container {
+            max-width: 800px; /* Возможно, стоит сделать контейнер шире для списка */
+            margin: 40px auto;
+            padding: 20px;
+            border: 1px solid #555;
+            border-radius: 8px;
+            background-color: rgba(30, 30, 30, 0.95);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #eee;
+        }
+        .citation-item {
+            border-bottom: 1px dashed #555; /* Разделитель между цитатами */
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+        }
+        .citation-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .citation-id {
+            font-weight: bold;
+            color: #5a9bd5; /* Цвет ID */
+        }
+        .citation-text {
+            margin-top: 5px;
+            margin-bottom: 5px;
+            color: #eee;
+        }
+        .citation-author {
+            font-style: italic;
+            color: #bbb;
+        }
+        a {
+            color: #007bff; /* Цвет ссылок */
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <h1 style="font-family: 'Great Vibes', cursive; text-align: center; margin-bottom: 30px;">Все цитаты Citatus+</h1>
+
+    <div th:if="${allCitations}">
+        <div th:each="citation : ${allCitations}" class="citation-item">
+            <p class="citation-id" th:text="'ID: ' + ${citation.getId()}"></p>
+            <p class="citation-text" th:text="${citation.getText()}"></p>
+            <p class="citation-author" th:text="'- ' + ${citation.getAuthor()}"></p>
+        </div>
+    </div>
+    <div th:unless="${allCitations}">
+        <p>Цитаты не найдены.</p>
+    </div>
+
+    <p style="margin-top: 30px; text-align: center;">
+        <a th:href="@{/api/citatus}">Вернуться на главную</a>
+    </p>
+
+</div>
+
+</body>
+</html>

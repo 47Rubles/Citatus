@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Citatus+</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        /* Ваши стили из предыдущего примера */
+        html, body {
+            /*height: 100%;*/
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: #eee;
+            background-color: #474747;
+        }
+        body {
+            background-image: url("https://wiki.star-conflict.ru/uploads/R2ST5r.gif");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .container {
+            max-width: 600px;
+            /* Изменили верхний отступ с 40px на 0 */
+            margin: 0 auto 40px auto; /* 0 сверху, auto по бокам, 40px снизу, auto по бокам */
+            padding: 20px;
+            border: 1px solid #555;
+            border-radius: 8px;
+            background-color: rgba(30, 30, 30, 0.95);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #eee;
+        }
+        /* Добавляем отступы между формами */
+        form {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #444; /* Разделитель между секциями форм */
+        }
+        form:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        div {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #bbb;
+        }
+
+        input[type="text"], textarea {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #333;
+            color: #eee;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #888;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 10px 15px;
+            /* background-color: #555; /* Старый серый фон */
+            background-color: #007bff; /* <-- Новый бирюзовый/teal фон */
+            color: #eee; /* Светлый текст */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s ease; /* Плавный переход при наведении */
+        }
+        button:hover {
+            /* background-color: #777; /* Старый серый при наведении */
+            background-color: #0056b3; /* <-- Светлее бирюзовый/teal при наведении */
+        }
+
+        /* Стиль для кнопки "Сохранить" (оставляем как акцентный синий) */
+        /* Убедитесь, что это правило идет ПОСЛЕ общего правила button */
+        #saveQuoteForm button[type="submit"] {
+            background-color: #007bff; /* Синий акцентный цвет */
+            color: white; /* Белый текст */
+        }
+        #saveQuoteForm button[type="submit"]:hover {
+            background-color: #0056b3; /* Затемнение синего при наведении */
+        }
+
+        button:last-child {
+            margin-right: 0;
+        }
+
+        hr { /* Уже не нужны, т.к. разделитель в формах */
+            display: none;
+        }
+
+
+        #resultsArea {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed #5a9bd5;
+            border-radius: 4px;
+            /*background-color: rgba(40, 40, 40, 0.7);*/
+            background-color: transparent;
+            min-height: 50px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            color: #eee;
+        }
+
+        /* Стили для отображения результатов в области результатов */
+        .result-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #5a9bd5; /* Цвет заголовка результата */
+        }
+        .result-content {
+            margin-bottom: 10px;
+        }
+        .result-content p {
+            margin: 5px 0;
+        }
+        .button-row {
+            display: flex; /* Включаем гибкий контейнер */
+            gap: 20px; /* Добавляем расстояние между элементами */
+            margin-bottom: 20px; /* Сохраняем отступ снизу */
+            padding-bottom: 15px; /* Сохраняем внутренний отступ снизу */
+            border-bottom: 1px solid #444; /* Сохраняем разделитель */
+            align-items: flex-start; /* Выравниваем элементы по верху (на случай разной высоты) */
+        }
+
+        /* Убираем стандартные отступы и границу у форм внутри button-row */
+        .button-row form {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+            flex: 1; /* Позволяем формам занимать равное доступное пространство */
+        }
+
+        /* Убираем отступы у div внутри этих форм, если они мешают выравниванию кнопки */
+        .button-row form > div {
+            margin-bottom: 0;
+        }
+
+        /* Опционально: чтобы кнопки заполняли всю доступную ширину внутри своих форм */
+        .button-row button {
+            width: 100%;
+            box-sizing: border-box; /* Учитываем padding и border в общей ширине */
+            margin-right: 0; /* Убираем правый отступ у кнопок, если он был */
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <h1 style="font-family: 'Great Vibes', cursive; scale: 150%; margin-left: 38.47%">CRUD Citatus+</h1>
+
+    <form action="/api/save" method="post">
+        <div>
+            <label for="quoteText">Цитата:</label>
+            <textarea id="quoteText" name="text" required placeholder="Введите текст цитаты..."></textarea>
+        </div>
+
+        <div>
+            <label for="quoteAuthor">Автор:</label>
+            <input type="text" id="quoteAuthor" name="author" placeholder="Введите имя автора...">
+        </div>
+
+        <div>
+            <button type="submit">Сохранить цитату</button>
+        </div>
+    </form>
+
+    <div class="button-row">
+        <form action="/api/citatus/generate" method="post">
+            <div>
+                <button type="submit" name="action" value="generate" formnovalidate>Сгенерировать цитату</button>
+            </div>
+        </form>
+
+        <form action="/api/citatus/all" method="get">
+            <div>
+                <button type="submit">Посмотреть все цитаты</button>
+            </div>
+        </form>
+    </div>
+    <form action="/api/citatus/translate" method="post">
+        <div>
+            <label for="quoteIdTranslateInput">ID цитаты для перевода:</label>
+            <input type="text" id="quoteIdTranslateInput" name="id"required placeholder="Введите ID цитаты" th:value="${requestedId}">
+        </div>
+        <div>
+            <label for="targetLanguage">Выберите язык:</label>
+            <select id="targetLanguage" name="targetLang" required>
+                <option value="Английский">Английский</option>
+                <option value="Немецкий">Немецкий</option>
+                <option value="Русский" selected>Русский</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Перевести цитату</button>
+        </div>
+    </form>
+
+    <form action="/api/citatus/view" method="get"> <div>
+        <label for="quoteIdInput">ID цитаты для просмотра:</label>
+        <input type="text" id="quoteIdInput" name="id"required placeholder="Введите ID цитаты" th:value="${requestedId}">
+    </div>
+        <div>
+            <button type="submit">Посмотреть цитату по ID</button>
+        </div>
+    </form>
+    <form action="/api/citatus/delete" method="post">
+        <div>
+            <label for="quoteIdDeleteInput">ID цитаты для удаления:</label>
+            <input type="text" id="quoteIdDeleteInput" name="id"required placeholder="Введите ID цитаты">
+        </div>
+        <div>
+            <button type="submit" style="background-color: #dc3545;">Удалить цитату</button> </div>
+    </form>
+
+
+
+    <div id="resultsArea">
+        <div class="result-title" th:if="${resultTitle}" th:text="${resultTitle}"></div>
+        <div class="result-content">
+            <div th:if="${citationResult}">
+                <p th:utext="'<span style=&quot;color: springgreen;&quot;>Цитата: </span>' + ${citationResult.getText()}"></p>
+                <p th:utext="'<span style=&quot;color: springgreen;&quot;>Автор: </span>' + ${citationResult.getAuthor()}"></p>
+            </div>
+            <div th:if="${textResult}">
+                <p th:text="${textResult}"></p>
+            </div>
+            <div th:if="${errorMessage}" style="color: red;">
+                <p th:text="${errorMessage}"></p>
+            </div>
+        </div>
+        <div th:unless="${resultTitle} or ${citationResult} or ${textResult} or ${errorMessage}">
+            Здесь будут отображаться результаты...
+        </div>
+    </div>
+
+    <div th:if="${message}" class="alert alert-success">
+        <p th:text="${message}" style="color: green;"></p>
+    </div>
+
+
+</div>
+
+</body>
+</html>
